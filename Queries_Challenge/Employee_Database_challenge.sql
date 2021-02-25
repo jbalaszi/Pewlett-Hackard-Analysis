@@ -50,3 +50,26 @@ ORDER BY em.emp_no;
 
 --Export mentorship eligibility table as CSV
 SELECT * FROM mentorship_eligibility;
+
+
+
+-- Filter retirement eligible employees by department
+SELECT DISTINCT ON(em.emp_no) em.emp_no, de.dept_no, de.to_date
+INTO dept_filter
+FROM employees as em
+LEFT JOIN dept_emp AS de
+ON em.emp_no = de.emp_no
+ORDER BY em.emp_no ASC, de.to_date DESC;
+
+SELECT un.emp_no, un.title, df.dept_no, df.to_date, dp.dept_name
+INTO dept_retire
+FROM unique_titles AS un
+LEFT JOIN dept_filter as df
+ON un.emp_no = df.emp_no
+LEFT JOIN departments AS dp
+ON df.dept_no = dp.dept_no;
+
+SELECT COUNT (emp_no) AS emp_count, dept_name
+FROM dept_retire
+GROUP BY dept_name
+ORDER BY emp_count DESC;
